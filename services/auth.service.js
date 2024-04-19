@@ -4,7 +4,7 @@ const {
 	ErrorWithStatus,
 } = require("../exceptions/error-with-status.exception.js");
 
-const registerUser = async (firstName, lastName, email, password) => {
+const registerUser = async (firstName, lastName, userName, email, password) => {
 	const user = await User.findOne({ email });
 
 	if (user) {
@@ -18,6 +18,7 @@ const registerUser = async (firstName, lastName, email, password) => {
 	const newUser = new User({
 		firstName,
 		lastName,
+		userName,
 		email,
 		password,
 	});
