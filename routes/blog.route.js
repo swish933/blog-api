@@ -8,6 +8,10 @@ const blogRouter = Router();
 
 blogRouter.use(authMiddleware);
 
-blogRouter.post("/", validationMiddleware(blogSchema), blogController.create);
+blogRouter.post(
+	"/",
+	validationMiddleware(blogSchema),
+	blogController.createDraft
+);
 
 module.exports = blogRouter;

@@ -1,7 +1,7 @@
 const { blogService } = require("../services/blog.service");
 const { WordPerMinute } = require("../util/constant");
 
-const create = async (req, res) => {
+const createDraft = async (req, res) => {
 	const { title, description, tags, body } = req.body;
 	const author = req.user.id;
 	const wordCount = body.split(" ").length;
@@ -20,15 +20,6 @@ const create = async (req, res) => {
 	}
 };
 
-const blogController = { create };
+const blogController = { createDraft };
 
 module.exports = { blogController };
-//  title is required and unique
-//  description
-//  author
-//  state
-//  read_count
-//  reading_time
-//  tags
-//  body is required
-//  timestamp
