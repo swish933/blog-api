@@ -1,5 +1,8 @@
 const Blog = require("../database/schemas/blog.schema");
 const { BlogStateOptions } = require("../util/constant");
+const {
+	ErrorWithStatus,
+} = require("../exceptions/error-with-status.exception");
 
 const createDraft = async (dto) => {
 	const newDraft = new Blog({ ...dto });
@@ -8,7 +11,7 @@ const createDraft = async (dto) => {
 	return newDraft;
 };
 
-const getPublishedPosts = async () => {
+const getPublishedBlogs = async () => {
 	try {
 		const publishedPosts = await Blog.find({
 			state: BlogStateOptions.published,
@@ -18,7 +21,22 @@ const getPublishedPosts = async () => {
 		throw new ErrorWithStatus(error.message, 500);
 	}
 };
+const getPublishedBlogById = async (blogId) => {
+	try {
+		const publishedPost = await Blog.findOne({
+			_id: blogId,
+			state: BlogStateOptions.published,
+		});
 
-const blogService = { createDraft, getPublishedPosts };
+		if (!publishedPost) {
+			throw new ErrorWithStatus("Post not found", 404);
+		}
+		return publishedPost;
+	} catch (error) {
+		throw new ErrorWithStatus(error.message, 500);
+	}
+};
+
+const blogService = { createDraft, getPublishedBlogs, getPublishedBlogById };
 
 module.exports = { blogService };

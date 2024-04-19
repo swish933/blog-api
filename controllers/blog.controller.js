@@ -20,9 +20,9 @@ const createDraft = async (req, res) => {
 	}
 };
 
-const getPublishedPosts = async (_, res) => {
+const getPublishedBlogs = async (_, res) => {
 	try {
-		const data = await blogService.getPublishedPosts();
+		const data = await blogService.getPublishedBlogs();
 		res.status(200).send({ message: "All published posts", data });
 	} catch (error) {
 		console.log(error);
@@ -30,7 +30,18 @@ const getPublishedPosts = async (_, res) => {
 		res.send({ message: error.message });
 	}
 };
+const getPublishedBlogById = async (req, res) => {
+	const { blogId } = req.params;
+	try {
+		const data = await blogService.getPublishedBlogById(blogId);
+		res.status(200).send({ message: "Published post", data });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.send({ message: error.message });
+	}
+};
 
-const blogController = { createDraft, getPublishedPosts };
+const blogController = { createDraft, getPublishedBlogs, getPublishedBlogById };
 
 module.exports = { blogController };
