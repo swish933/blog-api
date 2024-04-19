@@ -1,0 +1,13 @@
+const { blogController } = require("../controllers/blog.controller");
+const authMiddleware = require("../middleware/auth.middleware.js");
+const validationMiddleware = require("../middleware/route.middleware");
+const { blogSchema } = require("../validation/blog.validation");
+const { Router } = require("express");
+
+const blogRouter = Router();
+
+blogRouter.use(authMiddleware);
+
+blogRouter.post("/", validationMiddleware(blogSchema), blogController.create);
+
+module.exports = blogRouter;
