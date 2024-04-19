@@ -8,7 +8,6 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT;
-connectToMongoDB();
 
 app.use(express.json());
 
