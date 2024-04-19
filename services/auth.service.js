@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const Jwt = require("jsonwebtoken");
 const User = require("../database/schemas/user.schema");
 const {
 	ErrorWithStatus,
@@ -28,5 +29,34 @@ const registerUser = async (firstName, lastName, userName, email, password) => {
 	return newUser;
 };
 
-const authService = { registerUser };
+const loginUser = async (email, userName, password) => {
+	const user = await User.findOne({
+		$or: [{ email: email }, { userName: userName }],
+	});
+
+	if (!user) {
+		throw new ErrorWithStatus("User not found. Please register", 404);
+	}
+
+	const isValid = bcrypt.compareSync(password, user.password);
+
+	if (!isValid) {
+		throw new ErrorWithStatus("Username/Email or password incorrect", 401);
+	}
+
+	const JWT_SECRET = process.env.JWT_SECRET;
+	const token = Jwt.sign(
+		{
+			email: user.email,
+			id: user.id,
+			sub: user.id,
+		},
+		JWT_SECRET,
+		{ expiresIn: "1h" }
+	);
+
+	return { accessToken: token, user };
+};
+
+const authService = { registerUser, loginUser };
 module.exports = { authService };

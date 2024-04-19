@@ -9,4 +9,10 @@ const registerSchema = Joi.object({
 	confirmPassword: Joi.any().valid(Joi.ref("password")).required(),
 });
 
-module.exports = { registerSchema };
+const loginSchema = Joi.object({
+	email: Joi.string().email(),
+	userName: Joi.string(),
+	password: Joi.string().min(6).required(),
+}).xor("email", "userName");
+
+module.exports = { registerSchema, loginSchema };

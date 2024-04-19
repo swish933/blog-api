@@ -18,6 +18,22 @@ const register = async (req, res) => {
 	}
 };
 
-const authController = { register };
+const login = async (req, res) => {
+	const { email, userName, password } = req.body;
+	try {
+		const { accessToken, user } = await authService.loginUser(
+			email,
+			userName,
+			password
+		);
+		res.send({ message: "Login successful", data: { accessToken, user } });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.send({ message: error.message });
+	}
+};
+
+const authController = { register, login };
 
 module.exports = { authController };
