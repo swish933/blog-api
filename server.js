@@ -1,8 +1,6 @@
 const express = require("express");
 const { connectToMongoDB } = require("./database/connection");
-// const registerRoute = require("./routes/register.route");
-// const loginRoute = require("./routes/login.route");
-// const postsRoute = require("./routes/post.route");
+const authRoute = require("./routes/auth.route");
 
 require("dotenv").config();
 
@@ -10,6 +8,8 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+
+app.use("/auth", authRoute);
 
 //Catch all route
 app.all("*", (req, res) => {
