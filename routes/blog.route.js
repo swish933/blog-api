@@ -6,6 +6,8 @@ const { Router } = require("express");
 
 const blogRouter = Router();
 
+blogRouter.get("/published", blogController.getPublishedPosts);
+
 blogRouter.use(authMiddleware);
 
 blogRouter.post(

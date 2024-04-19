@@ -20,6 +20,17 @@ const createDraft = async (req, res) => {
 	}
 };
 
-const blogController = { createDraft };
+const getPublishedPosts = async (_, res) => {
+	try {
+		const data = await blogService.getPublishedPosts();
+		res.status(200).send({ message: "All published posts", data });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.send({ message: error.message });
+	}
+};
+
+const blogController = { createDraft, getPublishedPosts };
 
 module.exports = { blogController };
