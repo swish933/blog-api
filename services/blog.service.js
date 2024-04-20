@@ -11,7 +11,7 @@ const createDraft = async (dto) => {
 		await newDraft.populate("author");
 		return newDraft;
 	} catch (error) {
-		throw new ErrorWithStatus(error.message, 500);
+		throw new Error(error.message);
 	}
 };
 
@@ -22,7 +22,7 @@ const getPublishedBlogs = async () => {
 		});
 		return publishedPosts;
 	} catch (error) {
-		throw new ErrorWithStatus(error.message, 500);
+		throw new Error(error.message);
 	}
 };
 
@@ -38,29 +38,22 @@ const getPublishedBlogById = async (blogId) => {
 		}
 		return publishedPost;
 	} catch (error) {
-		throw new ErrorWithStatus(error.message, 500);
+		throw new Error(error.message);
 	}
 };
 
 const publishBlog = async (blogId, dto) => {
-	if (!blogId) {
-		throw new ErrorWithStatus("Bad Request", 400);
-	}
 	try {
 		const blogPost = await Blog.findById(blogId);
 		blogPost.state = dto.state;
 		await blogPost.save();
 		return blogPost;
 	} catch (error) {
-		throw new ErrorWithStatus("Server Error", 500);
+		throw new Error(error.message);
 	}
 };
 
 const editBlogPost = async (blogId, dto) => {
-	if (!blogId) {
-		throw new ErrorWithStatus("Bad Request", 400);
-	}
-
 	try {
 		const blogPost = Blog.findOneAndUpdate(
 			{ _id: blogId },
@@ -70,15 +63,29 @@ const editBlogPost = async (blogId, dto) => {
 
 		return blogPost;
 	} catch (error) {
-		throw new ErrorWithStatus(error.message, 500);
+		throw new Error(error.message);
 	}
 };
+
+const deleteBlogPost = async (blogId) => {
+	try {
+		const deletedBlogPost = await Blog.findOneAndDelete({ _id: blogId }).select(
+			{ createdAt: false, updatedAt: false }
+		);
+
+		return deletedBlogPost;
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
 const blogService = {
 	createDraft,
 	getPublishedBlogs,
 	getPublishedBlogById,
 	publishBlog,
 	editBlogPost,
+	deleteBlogPost,
 };
 
 module.exports = { blogService };

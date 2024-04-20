@@ -90,12 +90,25 @@ const editBlogPost = async (req, res) => {
 	}
 };
 
+const deleteBlogPost = async (req, res) => {
+	const { blogId } = req.params;
+	try {
+		const deletedBlogPost = await blogService.deleteBlogPost(blogId);
+		res.json({ message: "Post deleted successfully", data: deletedBlogPost });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.json({ message: error.message });
+	}
+};
+
 const blogController = {
 	createDraft,
 	getPublishedBlogs,
 	getPublishedBlogById,
 	publishBlog,
 	editBlogPost,
+	deleteBlogPost,
 };
 
 module.exports = { blogController };

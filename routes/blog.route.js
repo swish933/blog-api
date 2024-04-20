@@ -37,4 +37,6 @@ blogRouter.patch(
 	blogController.editBlogPost
 );
 
+blogRouter.delete("/:blogId", isResourceOwner, blogController.deleteBlogPost);
+
 module.exports = blogRouter;
