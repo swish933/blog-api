@@ -5,10 +5,14 @@ const {
 } = require("../exceptions/error-with-status.exception");
 
 const createDraft = async (dto) => {
-	const newDraft = new Blog({ ...dto });
-	await newDraft.save();
-	await newDraft.populate("author");
-	return newDraft;
+	try {
+		const newDraft = new Blog({ ...dto });
+		await newDraft.save();
+		await newDraft.populate("author");
+		return newDraft;
+	} catch (error) {
+		throw new ErrorWithStatus(error.message, 500);
+	}
 };
 
 const getPublishedBlogs = async () => {
@@ -42,20 +46,39 @@ const publishBlog = async (blogId, dto) => {
 	if (!blogId) {
 		throw new ErrorWithStatus("Bad Request", 400);
 	}
-
-	const blogPost = await Blog.findById(blogId);
-
-	blogPost.state = dto.state;
-
-	await blogPost.save();
-	return blogPost;
+	try {
+		const blogPost = await Blog.findById(blogId);
+		blogPost.state = dto.state;
+		await blogPost.save();
+		return blogPost;
+	} catch (error) {
+		throw new ErrorWithStatus("Server Error", 500);
+	}
 };
 
+const editBlogPost = async (blogId, dto) => {
+	if (!blogId) {
+		throw new ErrorWithStatus("Bad Request", 400);
+	}
+
+	try {
+		const blogPost = Blog.findOneAndUpdate(
+			{ _id: blogId },
+			{ ...dto },
+			{ new: true }
+		);
+
+		return blogPost;
+	} catch (error) {
+		throw new ErrorWithStatus(error.message, 500);
+	}
+};
 const blogService = {
 	createDraft,
 	getPublishedBlogs,
 	getPublishedBlogById,
 	publishBlog,
+	editBlogPost,
 };
 
 module.exports = { blogService };

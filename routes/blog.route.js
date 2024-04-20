@@ -5,6 +5,7 @@ const isResourceOwner = require("../middleware/resource-owner.middleware.js");
 const {
 	blogSchema,
 	publishBlogSchema,
+	updateBlogSchema,
 } = require("../validation/blog.validation");
 const { Router } = require("express");
 
@@ -27,6 +28,13 @@ blogRouter.patch(
 	isResourceOwner,
 	validationMiddleware(publishBlogSchema),
 	blogController.publishBlog
+);
+
+blogRouter.patch(
+	"/edit/:blogId",
+	isResourceOwner,
+	validationMiddleware(updateBlogSchema),
+	blogController.editBlogPost
 );
 
 module.exports = blogRouter;

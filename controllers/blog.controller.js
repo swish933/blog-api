@@ -60,11 +60,42 @@ const publishBlog = async (req, res) => {
 	}
 };
 
+const editBlogPost = async (req, res) => {
+	const { blogId } = req.params;
+	const { title, description, tags, body } = req.body;
+	const dto = { title, description, tags, body };
+
+	let readingTime;
+	let wordCount;
+
+	if (body) {
+		wordCount = body.split(" ").length;
+	}
+
+	if (wordCount > 0) {
+		readingTime = Math.ceil(wordCount / WordPerMinute);
+	}
+
+	if (readingTime > 0) {
+		dto.readingTime = readingTime;
+	}
+
+	try {
+		const editedBlogPost = await blogService.editBlogPost(blogId, dto);
+		res.json({ message: "Blog post updated", data: editedBlogPost });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.json({ message: error.message });
+	}
+};
+
 const blogController = {
 	createDraft,
 	getPublishedBlogs,
 	getPublishedBlogById,
 	publishBlog,
+	editBlogPost,
 };
 
 module.exports = { blogController };
