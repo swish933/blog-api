@@ -23,25 +23,48 @@ const createDraft = async (req, res) => {
 const getPublishedBlogs = async (_, res) => {
 	try {
 		const data = await blogService.getPublishedBlogs();
-		res.status(200).send({ message: "All published posts", data });
+		res.status(200).json({ message: "All published posts", data });
 	} catch (error) {
 		console.log(error);
 		res.status(error.status || 500);
-		res.send({ message: error.message });
+		res.json({ message: error.message });
 	}
 };
+
 const getPublishedBlogById = async (req, res) => {
 	const { blogId } = req.params;
 	try {
 		const data = await blogService.getPublishedBlogById(blogId);
-		res.status(200).send({ message: "Published post", data });
+		res.status(200).json({ message: "Published post", data });
 	} catch (error) {
 		console.log(error);
 		res.status(error.status || 500);
-		res.send({ message: error.message });
+		res.json({ message: error.message });
 	}
 };
 
-const blogController = { createDraft, getPublishedBlogs, getPublishedBlogById };
+const publishBlog = async (req, res) => {
+	const { blogId } = req.params;
+	const { state } = req.body;
+	try {
+		const dto = { state };
+		const updatedBlog = await blogService.publishBlog(blogId, dto);
+		res.json({
+			message: "Blog published successfully",
+			data: updatedBlog,
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.json({ message: error.message });
+	}
+};
+
+const blogController = {
+	createDraft,
+	getPublishedBlogs,
+	getPublishedBlogById,
+	publishBlog,
+};
 
 module.exports = { blogController };

@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { BlogStateOptions } = require("../util/constant");
 
 const blogSchema = Joi.object({
 	title: Joi.string().min(5).required(),
@@ -7,4 +8,10 @@ const blogSchema = Joi.object({
 	body: Joi.string().min(5).required(),
 });
 
-module.exports = { blogSchema };
+const publishBlogSchema = Joi.object({
+	state: Joi.string()
+		.valid(BlogStateOptions.draft, BlogStateOptions.published)
+		.required(),
+});
+
+module.exports = { blogSchema, publishBlogSchema };

@@ -21,6 +21,7 @@ const getPublishedBlogs = async () => {
 		throw new ErrorWithStatus(error.message, 500);
 	}
 };
+
 const getPublishedBlogById = async (blogId) => {
 	try {
 		const publishedPost = await Blog.findOne({
@@ -37,6 +38,24 @@ const getPublishedBlogById = async (blogId) => {
 	}
 };
 
-const blogService = { createDraft, getPublishedBlogs, getPublishedBlogById };
+const publishBlog = async (blogId, dto) => {
+	if (!blogId) {
+		throw new ErrorWithStatus("Bad Request", 400);
+	}
+
+	const blogPost = await Blog.findById(blogId);
+
+	blogPost.state = dto.state;
+
+	await blogPost.save();
+	return blogPost;
+};
+
+const blogService = {
+	createDraft,
+	getPublishedBlogs,
+	getPublishedBlogById,
+	publishBlog,
+};
 
 module.exports = { blogService };
