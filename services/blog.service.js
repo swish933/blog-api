@@ -98,10 +98,10 @@ const getPublishedBlogById = async (blogId) => {
 			throw new ErrorWithStatus("Post not found", 404);
 		}
 
-		// await publishedPost.populate({
-		// 	path: "authors",
-		// 	select: { password: false, createdAt: false, updatedAt: false },
-		// });
+		await publishedPost.populate({
+			path: "author",
+			select: { password: false, createdAt: false, updatedAt: false },
+		});
 
 		publishedPost.readCount += 1;
 		await publishedPost.save();
