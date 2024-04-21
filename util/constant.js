@@ -5,4 +5,11 @@ const BlogStateOptions = {
 
 const WordPerMinute = 250;
 
-module.exports = { BlogStateOptions, WordPerMinute };
+const orderByOptions = {
+	readingTime: "readingTime",
+	readCount: "readCount",
+	createdAt: "createdAt",
+	updatedAt: "updatedAt",
+};
+
+module.exports = { BlogStateOptions, WordPerMinute, orderByOptions };

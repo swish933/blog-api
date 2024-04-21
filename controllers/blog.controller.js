@@ -1,5 +1,9 @@
 const { blogService } = require("../services/blog.service");
-const { WordPerMinute, BlogStateOptions } = require("../util/constant");
+const {
+	WordPerMinute,
+	BlogStateOptions,
+	orderByOptions,
+} = require("../util/constant");
 
 const createDraft = async (req, res) => {
 	const { title, description, tags, body } = req.body;
@@ -30,8 +34,35 @@ const getPublishedBlogs = async (req, res) => {
 	let { q } = req.query;
 	q = q ? q : null;
 
+	let order = req.query.order || null;
+	order = order ? order : null;
+
+	let orderBy = req.query.orderBy || null;
+	orderBy = orderBy ? orderBy : null;
+	orderBy =
+		orderBy === orderByOptions.readingTime ||
+		orderBy === orderByOptions.readCount ||
+		orderBy === orderByOptions.createdAt ||
+		orderBy === orderByOptions.updatedAt
+			? orderBy
+			: null;
+
+	if (order == "asc") {
+		order = 1;
+	}
+
+	if (order == "desc") {
+		order = -1;
+	}
+
 	try {
-		const { data, meta } = await blogService.getPublishedBlogs(page, limit, q);
+		const { data, meta } = await blogService.getPublishedBlogs(
+			page,
+			limit,
+			q,
+			order,
+			orderBy
+		);
 		res.json({ message: `Page ${page} of published posts`, data, meta });
 	} catch (error) {
 		console.log(error);

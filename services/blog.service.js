@@ -15,7 +15,13 @@ const createDraft = async (dto) => {
 	}
 };
 
-const getPublishedBlogs = async (page = 1, limit = 20, query = null) => {
+const getPublishedBlogs = async (
+	page = 1,
+	limit = 20,
+	query = null,
+	order = -1,
+	orderBy = "createdAt"
+) => {
 	const skip = (page - 1) * limit;
 	const filter = { state: BlogStateOptions.published };
 
@@ -45,13 +51,17 @@ const getPublishedBlogs = async (page = 1, limit = 20, query = null) => {
 			},
 		},
 		{ $unset: ["author.password", "author.createdAt", "author.updatedAt"] },
+		{ $sort: { [`${orderBy}`]: order } },
 	];
 
 	try {
 		if (!query) {
 			const publishedPosts = await Blog.find({ ...filter })
 				.skip(skip)
-				.limit(limit);
+				.limit(limit)
+				.sort({
+					[orderBy]: order,
+				});
 			const total = await Blog.countDocuments({ ...filter });
 			return { data: publishedPosts, meta: { page, limit, total } };
 		} else {
@@ -67,7 +77,6 @@ const getPublishedBlogs = async (page = 1, limit = 20, query = null) => {
 			]);
 
 			const [doc] = total;
-			console.log(doc.totalDocs);
 			return {
 				data: publishedPosts,
 				meta: { page, limit, total: doc.totalDocs },
