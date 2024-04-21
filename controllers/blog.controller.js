@@ -102,6 +102,18 @@ const deleteBlogPost = async (req, res) => {
 	}
 };
 
+const getAuthorBlogPosts = async (req, res) => {
+	const userId = req.user.id;
+	try {
+		const authorBlogPosts = await blogService.getAuthorBlogPosts(userId);
+		res.json({ message: "Author Blog Posts", data: authorBlogPosts });
+	} catch (error) {
+		console.log(error);
+		res.status(error.status || 500);
+		res.json({ message: error.message });
+	}
+};
+
 const blogController = {
 	createDraft,
 	getPublishedBlogs,
@@ -109,6 +121,7 @@ const blogController = {
 	publishBlog,
 	editBlogPost,
 	deleteBlogPost,
+	getAuthorBlogPosts,
 };
 
 module.exports = { blogController };

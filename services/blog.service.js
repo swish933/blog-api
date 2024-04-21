@@ -11,7 +11,7 @@ const createDraft = async (dto) => {
 		await newDraft.populate("author");
 		return newDraft;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -22,7 +22,7 @@ const getPublishedBlogs = async () => {
 		});
 		return publishedPosts;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -38,7 +38,7 @@ const getPublishedBlogById = async (blogId) => {
 		}
 		return publishedPost;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -49,7 +49,7 @@ const publishBlog = async (blogId, dto) => {
 		await blogPost.save();
 		return blogPost;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -63,7 +63,7 @@ const editBlogPost = async (blogId, dto) => {
 
 		return blogPost;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -75,7 +75,16 @@ const deleteBlogPost = async (blogId) => {
 
 		return deletedBlogPost;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new ErrorWithStatus(error.message, 500);
+	}
+};
+
+const getAuthorBlogPosts = async (userId) => {
+	try {
+		const authorBlogPosts = await Blog.find({ author: userId });
+		return authorBlogPosts;
+	} catch (error) {
+		throw new ErrorWithStatus(error.message, 500);
 	}
 };
 
@@ -86,6 +95,7 @@ const blogService = {
 	publishBlog,
 	editBlogPost,
 	deleteBlogPost,
+	getAuthorBlogPosts,
 };
 
 module.exports = { blogService };
