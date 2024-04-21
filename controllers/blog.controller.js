@@ -1,5 +1,5 @@
 const { blogService } = require("../services/blog.service");
-const { WordPerMinute } = require("../util/constant");
+const { WordPerMinute, BlogStateOptions } = require("../util/constant");
 
 const createDraft = async (req, res) => {
 	const { title, description, tags, body } = req.body;
@@ -103,10 +103,30 @@ const deleteBlogPost = async (req, res) => {
 };
 
 const getAuthorBlogPosts = async (req, res) => {
+	let page = Number(req.query.page) || 1;
+	page = page < 1 ? 1 : page;
+
+	let limit = Number(req.query.limit) || 10;
+	limit = limit < 1 ? 10 : limit;
+
+	let state = req.query.state || null;
+	state = state ? state.toUpperCase() : null;
+
+	const query =
+		state === BlogStateOptions.draft || state === BlogStateOptions.published
+			? state
+			: null;
+
 	const userId = req.user.id;
+
 	try {
-		const authorBlogPosts = await blogService.getAuthorBlogPosts(userId);
-		res.json({ message: "Author Blog Posts", data: authorBlogPosts });
+		const { data, meta } = await blogService.getAuthorBlogPosts(
+			userId,
+			page,
+			limit,
+			query
+		);
+		res.json({ message: "Author Blog Posts", data, meta });
 	} catch (error) {
 		console.log(error);
 		res.status(error.status || 500);

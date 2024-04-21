@@ -79,10 +79,21 @@ const deleteBlogPost = async (blogId) => {
 	}
 };
 
-const getAuthorBlogPosts = async (userId) => {
+const getAuthorBlogPosts = async (
+	userId,
+	page = 1,
+	limit = 10,
+	query = null
+) => {
+	const skip = (page - 1) * limit;
+	const filter = query ? { state: { $regex: query, $options: "i" } } : {};
+
 	try {
-		const authorBlogPosts = await Blog.find({ author: userId });
-		return authorBlogPosts;
+		const authorBlogPosts = await Blog.find({ ...filter, author: userId })
+			.skip(skip)
+			.limit(limit);
+		const total = await Blog.countDocuments({ ...filter, author: userId });
+		return { data: authorBlogPosts, meta: { page, limit, total } };
 	} catch (error) {
 		throw new ErrorWithStatus(error.message, 500);
 	}
