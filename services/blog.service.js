@@ -15,12 +15,14 @@ const createDraft = async (dto) => {
 	}
 };
 
-const getPublishedBlogs = async () => {
+const getPublishedBlogs = async (page = 1, limit = 20) => {
+	const skip = (page - 1) * limit;
+	const filter = { state: BlogStateOptions.published };
+
 	try {
-		const publishedPosts = await Blog.find({
-			state: BlogStateOptions.published,
-		});
-		return publishedPosts;
+		const publishedPosts = await Blog.find(filter).skip(skip).limit(limit);
+		const total = await Blog.countDocuments(filter);
+		return { data: publishedPosts, meta: { page, limit, total } };
 	} catch (error) {
 		throw new ErrorWithStatus(error.message, 500);
 	}

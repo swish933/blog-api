@@ -20,10 +20,16 @@ const createDraft = async (req, res) => {
 	}
 };
 
-const getPublishedBlogs = async (_, res) => {
+const getPublishedBlogs = async (req, res) => {
+	let page = Number(req.query.page) || 1;
+	page = page < 1 ? 1 : page;
+
+	let limit = Number(req.query.limit) || 20;
+	limit = limit < 1 ? 20 : limit;
+
 	try {
-		const data = await blogService.getPublishedBlogs();
-		res.status(200).json({ message: "All published posts", data });
+		const { data, meta } = await blogService.getPublishedBlogs(page, limit);
+		res.json({ message: `Page ${page} of published posts`, data, meta });
 	} catch (error) {
 		console.log(error);
 		res.status(error.status || 500);
