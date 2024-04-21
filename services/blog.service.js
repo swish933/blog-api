@@ -15,14 +15,64 @@ const createDraft = async (dto) => {
 	}
 };
 
-const getPublishedBlogs = async (page = 1, limit = 20) => {
+const getPublishedBlogs = async (page = 1, limit = 20, query = null) => {
 	const skip = (page - 1) * limit;
 	const filter = { state: BlogStateOptions.published };
 
+	const aggregationPipeline = [
+		{
+			$lookup: {
+				from: "users",
+				localField: "author",
+				foreignField: "_id",
+				as: "author",
+			},
+		},
+		{ $unwind: "$author" },
+		{
+			$match: {
+				$and: [
+					{ state: BlogStateOptions.published },
+					{
+						$or: [
+							{ title: { $regex: query, $options: "i" } },
+							{ tags: { $regex: query, $options: "i" } },
+							{ "author.firstName": { $regex: query, $options: "i" } },
+							{ "author.lastName": { $regex: query, $options: "i" } },
+						],
+					},
+				],
+			},
+		},
+		{ $unset: ["author.password", "author.createdAt", "author.updatedAt"] },
+	];
+
 	try {
-		const publishedPosts = await Blog.find(filter).skip(skip).limit(limit);
-		const total = await Blog.countDocuments(filter);
-		return { data: publishedPosts, meta: { page, limit, total } };
+		if (!query) {
+			const publishedPosts = await Blog.find({ ...filter })
+				.skip(skip)
+				.limit(limit);
+			const total = await Blog.countDocuments({ ...filter });
+			return { data: publishedPosts, meta: { page, limit, total } };
+		} else {
+			const publishedPosts = await Blog.aggregate(aggregationPipeline)
+				.skip(skip)
+				.limit(limit);
+
+			const total = await Blog.aggregate([
+				...aggregationPipeline,
+				{
+					$count: "totalDocs",
+				},
+			]);
+
+			const [doc] = total;
+			console.log(doc.totalDocs);
+			return {
+				data: publishedPosts,
+				meta: { page, limit, total: doc.totalDocs },
+			};
+		}
 	} catch (error) {
 		throw new ErrorWithStatus(error.message, 500);
 	}

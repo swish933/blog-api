@@ -27,8 +27,11 @@ const getPublishedBlogs = async (req, res) => {
 	let limit = Number(req.query.limit) || 20;
 	limit = limit < 1 ? 20 : limit;
 
+	let { q } = req.query;
+	q = q ? q : null;
+
 	try {
-		const { data, meta } = await blogService.getPublishedBlogs(page, limit);
+		const { data, meta } = await blogService.getPublishedBlogs(page, limit, q);
 		res.json({ message: `Page ${page} of published posts`, data, meta });
 	} catch (error) {
 		console.log(error);
