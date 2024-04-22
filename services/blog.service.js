@@ -79,7 +79,7 @@ const getPublishedBlogs = async (
 			const [doc] = total;
 			return {
 				data: publishedPosts,
-				meta: { page, limit, total: doc.totalDocs },
+				meta: { page, limit, total: doc?.totalDocs ? doc.totalDocs : 0 },
 			};
 		}
 	} catch (error) {
