@@ -9,6 +9,8 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT;
 
+connectToMongoDB();
+
 app.use(express.json());
 
 app.use("/auth", authRoute);
@@ -24,13 +26,6 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-connectToMongoDB()
-	.then(() => {
-		console.log("Connected to DB successfully");
-		app.listen(PORT, () => {
-			console.log(`Server is running on port ${PORT}`);
-		});
-	})
-	.catch((err) => {
-		console.log("Error connecting to DB", err);
-	});
+app.listen(PORT, () => {
+	console.log(`Server is running on port ${PORT}`);
+});
