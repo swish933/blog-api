@@ -10,7 +10,7 @@
 
 [Click here.](https://documenter.getpostman.com/view/4304944/2sA3Bq3WGf)
 
-#### Entity Relationship Diagram
+### Entity Relationship Diagram
 
 - DB: MongoDB
 
