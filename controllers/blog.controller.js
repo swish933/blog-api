@@ -34,11 +34,11 @@ const getPublishedBlogs = async (req, res) => {
 	let { q } = req.query;
 	q = q ? q : null;
 
-	let order = req.query.order || null;
+	let order = req.query.order || -1;
 	order = order ? order : null;
 
-	let orderBy = req.query.orderBy || null;
-	orderBy = orderBy ? orderBy : null;
+	let orderBy = req.query.orderBy || "createdAt";
+	orderBy = orderBy ? orderBy : "null";
 	orderBy =
 		orderBy === orderByOptions.readingTime ||
 		orderBy === orderByOptions.readCount ||
