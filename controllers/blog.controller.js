@@ -12,7 +12,7 @@ const createDraft = async (req, res) => {
 	const readingTime = Math.ceil(wordCount / WordPerMinute);
 	try {
 		const dto = { title, description, author, readingTime, tags, body };
-		const newDraft = await blogService.createBlog(dto);
+		const newDraft = await blogService.createDraft(dto);
 		res.json({
 			message: "New draft blog created successfully!",
 			data: newDraft,
