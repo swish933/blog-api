@@ -29,9 +29,9 @@ const registerUser = async (firstName, lastName, userName, email, password) => {
 	return newUser;
 };
 
-const loginUser = async (email, userName, password) => {
+const loginUser = async (userInfo, password) => {
 	const user = await User.findOne({
-		$or: [{ email: email }, { userName: userName }],
+		$or: [{ email: userInfo }, { userName: userInfo }],
 	});
 
 	if (!user) {

@@ -20,10 +20,12 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
 	const { email, userName, password } = req.body;
+
+	const userInfo = !email ? userName : email;
+
 	try {
 		const { accessToken, user } = await authService.loginUser(
-			email,
-			userName,
+			userInfo,
 			password
 		);
 		res.send({ message: "Login successful", data: { accessToken, user } });
