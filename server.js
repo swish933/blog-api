@@ -1,4 +1,5 @@
 const express = require("express");
+const errorHandler = require("./middleware/error.middleware.js");
 const { connectToMongoDB } = require("./database/connection");
 const authRoute = require("./routes/auth.route");
 const blogsRoute = require("./routes/blog.route");
@@ -20,6 +21,8 @@ app.all("*", (req, res) => {
 		message: "Not found",
 	});
 });
+
+app.use(errorHandler);
 
 connectToMongoDB()
 	.then(() => {
