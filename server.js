@@ -1,6 +1,7 @@
 const express = require("express");
 const errorHandler = require("./middleware/error.middleware.js");
 const { connectToMongoDB } = require("./database/connection");
+const redisClient = require("./integrations/redis");
 const authRoute = require("./routes/auth.route");
 const blogsRoute = require("./routes/blog.route");
 
@@ -10,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 connectToMongoDB();
+redisClient.connect();
 
 app.use(express.json());
 

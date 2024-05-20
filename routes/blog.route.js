@@ -15,6 +15,8 @@ blogRouter.get("/published", blogController.getPublishedBlogs);
 
 blogRouter.get("/published/:blogId", blogController.getPublishedBlogById);
 
+//log in to access the following routes
+
 blogRouter.use(authMiddleware);
 
 blogRouter.post(

@@ -4,6 +4,7 @@ const {
 	BlogStateOptions,
 	orderByOptions,
 } = require("../util/constant");
+const redisClient = require("../integrations/redis");
 
 const createDraft = async (req, res) => {
 	const { title, description, tags, body } = req.body;
@@ -38,7 +39,7 @@ const getPublishedBlogs = async (req, res) => {
 	order = order ? order : null;
 
 	let orderBy = req.query.orderBy || "createdAt";
-	orderBy = orderBy ? orderBy : "null";
+	orderBy = orderBy ? orderBy : null;
 	orderBy =
 		orderBy === orderByOptions.readingTime ||
 		orderBy === orderByOptions.readCount ||
@@ -55,6 +56,33 @@ const getPublishedBlogs = async (req, res) => {
 		order = -1;
 	}
 
+	const whereQuery = {};
+
+	if (req.query.q) {
+		whereQuery.q = req.query.q;
+	}
+	if (req.query.order) {
+		whereQuery.order = req.query.order;
+	}
+	if (req.query.orderBy) {
+		whereQuery.orderBy = req.query.orderBy;
+	}
+
+	const cacheKey = `blogs:${JSON.stringify(whereQuery)}:${limit}:${page}`;
+
+	// get data from database
+	const data = await redisClient.get(cacheKey);
+
+	if (data) {
+		console.log(`returning data from cache`);
+		return res.json({
+			data: JSON.parse(data),
+			error: null,
+		});
+	}
+
+	console.log(`returning data from DB`);
+
 	try {
 		const { data, meta } = await blogService.getPublishedBlogs(
 			page,
@@ -63,6 +91,10 @@ const getPublishedBlogs = async (req, res) => {
 			order,
 			orderBy
 		);
+
+		// set cache
+		await redisClient.setEx(cacheKey, 600, JSON.stringify(data));
+
 		res.json({ message: `Page ${page} of published posts`, data, meta });
 	} catch (error) {
 		console.log(error);
