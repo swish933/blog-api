@@ -12,9 +12,7 @@ const register = async (req, res) => {
 		);
 		res.send({ message: "User created successfully", data: newUser });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.send({ message: error.message });
+		next(error);
 	}
 };
 
@@ -30,9 +28,7 @@ const login = async (req, res) => {
 		);
 		res.send({ message: "Login successful", data: { accessToken, user } });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.send({ message: error.message });
+		next(error);
 	}
 };
 

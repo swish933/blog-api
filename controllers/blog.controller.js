@@ -19,9 +19,7 @@ const createDraft = async (req, res) => {
 			data: newDraft,
 		});
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -97,9 +95,7 @@ const getPublishedBlogs = async (req, res) => {
 
 		res.json({ message: `Page ${page} of published posts`, data, meta });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -109,9 +105,7 @@ const getPublishedBlogById = async (req, res) => {
 		const data = await blogService.getPublishedBlogById(blogId);
 		res.status(200).json({ message: "Published post", data });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -126,9 +120,7 @@ const publishBlog = async (req, res) => {
 			data: updatedBlog,
 		});
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -156,9 +148,7 @@ const editBlogPost = async (req, res) => {
 		const editedBlogPost = await blogService.editBlogPost(blogId, dto);
 		res.json({ message: "Blog post updated", data: editedBlogPost });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -168,9 +158,7 @@ const deleteBlogPost = async (req, res) => {
 		const deletedBlogPost = await blogService.deleteBlogPost(blogId);
 		res.json({ message: "Post deleted successfully", data: deletedBlogPost });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
@@ -200,9 +188,7 @@ const getAuthorBlogPosts = async (req, res) => {
 		);
 		res.json({ message: "Author Blog Posts", data, meta });
 	} catch (error) {
-		console.log(error);
-		res.status(error.status || 500);
-		res.json({ message: error.message });
+		next(error)
 	}
 };
 
