@@ -1,6 +1,6 @@
 const { authService } = require("../services/auth.service");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
 	const { firstName, lastName, userName, email, password } = req.body;
 	try {
 		const newUser = await authService.registerUser(
@@ -16,7 +16,7 @@ const register = async (req, res) => {
 	}
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
 	const { email, userName, password } = req.body;
 
 	const userInfo = !email ? userName : email;

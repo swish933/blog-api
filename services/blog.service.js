@@ -18,9 +18,7 @@ const createDraft = async (dto) => {
 const getPublishedBlogs = async (
 	page = 1,
 	limit = 20,
-	query = null,
-	order = -1,
-	orderBy = "createdAt"
+	{ q = null, order = -1, orderBy = "createdAt" } = {}
 ) => {
 	const skip = (page - 1) * limit;
 	const filter = { state: BlogStateOptions.published };
@@ -41,10 +39,10 @@ const getPublishedBlogs = async (
 					{ state: BlogStateOptions.published },
 					{
 						$or: [
-							{ title: { $regex: query, $options: "i" } },
-							{ tags: { $regex: query, $options: "i" } },
-							{ "author.firstName": { $regex: query, $options: "i" } },
-							{ "author.lastName": { $regex: query, $options: "i" } },
+							{ title: { $regex: q, $options: "i" } },
+							{ tags: { $regex: q, $options: "i" } },
+							{ "author.firstName": { $regex: q, $options: "i" } },
+							{ "author.lastName": { $regex: q, $options: "i" } },
 						],
 					},
 				],
@@ -55,7 +53,7 @@ const getPublishedBlogs = async (
 	];
 
 	try {
-		if (!query) {
+		if (!q) {
 			const publishedPosts = await Blog.find({ ...filter })
 				.skip(skip)
 				.limit(limit)
@@ -148,14 +146,9 @@ const deleteBlogPost = async (blogId) => {
 	}
 };
 
-const getAuthorBlogPosts = async (
-	userId,
-	page = 1,
-	limit = 10,
-	query = null
-) => {
+const getAuthorBlogPosts = async (userId, page = 1, limit = 10, q = null) => {
 	const skip = (page - 1) * limit;
-	const filter = query ? { state: { $regex: query, $options: "i" } } : {};
+	const filter = q ? { state: { $regex: q, $options: "i" } } : {};
 
 	try {
 		const authorBlogPosts = await Blog.find({ ...filter, author: userId })
